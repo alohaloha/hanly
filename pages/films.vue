@@ -27,7 +27,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.wrap {
+.container {
   max-width: 40rem;
   margin: 0 auto;
 }
