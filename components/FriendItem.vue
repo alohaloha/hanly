@@ -1,6 +1,7 @@
 <template>
   <li class="item">
     <nuxt-link :to="to" class="link">
+      <!-- !!imgの書き方はimgだけどもokだがReactへの移行を考えたら、こっちの書き方に慣れてた方がいい -->
       <img v-if="!!img" :src="img" alt class="img" />
       <span v-else class="placeholder"></span>
       <div class="body">

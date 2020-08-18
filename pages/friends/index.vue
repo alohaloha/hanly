@@ -25,7 +25,7 @@
     </div>
     <div v-else class="noFriends">
       <img
-        src="https://res.cloudinary.com/kiyopikko/image/upload/v1562219254/hanly-gray_2x_pdy6qo.png"
+        src="https://res.cloudinary.com//image/upload/v1562219254/hanly-gray_2x_pdy6qo.png"
         alt
         :width="178"
       />
@@ -170,3 +170,7 @@ export default {
   }
 }
 </style>
+// 06_M_ 佐々木 紀人 から 皆様 : (2:44 午後) // “Vue 位置情報
+プラグイン”などでググると色々なAPIやライブラリが出てくるのですが、その中で実際に使うものを選定する際のコツなどはありますか？
+// Kiyohiko Heima から 皆様 : (2:49 午後) //
+まず見るのはGithubのスター数が多くてnpmのページのダウンロード数が多いもの、そしてリポジトリの最終commit日を見て最近までメンテナンスされているか、そのあと自分が使いたい用途にあっているか（必要な機能があるか、多機能すぎないかなど）を見て判断します！
