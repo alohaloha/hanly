@@ -1,16 +1,20 @@
 export const state = () => ({
-  films: [],
+  films: [], // 初期値は空の配列
 })
 
 export const getters = {
+  // vueにbindする
   films(state) {
-    return state.films
+    // モジュールの名前films
+    return state.films // stateのfilmsにアクセスする
   },
 }
 
 export const mutations = {
-  setFilms(state, { films }) {
-    state.films = films
+  // actionsから呼ぶ
+  setFilms(state, films) {
+    // 第二引数のfilmsはactionsのcommitの第二引数
+    state.films = films // stateのfilmsにcommitで渡したfilmsを代入
   },
 }
 
@@ -20,6 +24,6 @@ export const actions = {
     // 要は JavaScript で、URL からデータをとってきて変数にいれるためのもの
     const res = await this.$axious('https://ghibliapi.herokuapp.com/films')
     const films = res.data // 配列で映画データが入ってくる
-    commit('setFilms', films) // mutationに渡す
+    commit('setFilms', films) // mutationsに渡す
   },
 }
