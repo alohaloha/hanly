@@ -1,38 +1,40 @@
 <template>
   <div>
-    <nuxt-link class="user" to="/me">
-      <img
-        class="user__icon"
-        :src="
-          face_image_url ||
-          'https://res.cloudinary.com/kiyopikko/image/upload/v1561617116/empty-user-image_o4ll8m.png'
-        "
-      />
-      <div class="user__txt">マイページ</div>
-    </nuxt-link>
-    <div v-if="getFriends.length > 0" class="friends">
-      <h2 class="headline">友だち</h2>
-      <ul>
-        <FriendItem
-          v-for="friend in getFriends"
-          :key="friend.id"
-          :to="`/friends/${friend.id}`"
-          :nickname="friend.nickname"
-          :date="friend.date"
-          :img="friend.img"
+    <pull-to :top-config="topConfig" :top-load-method="refresh">
+      <nuxt-link class="user" to="/me">
+        <img
+          class="user__icon"
+          :src="
+            face_image_url ||
+            'https://res.cloudinary.com/kiyopikko/image/upload/v1561617116/empty-user-image_o4ll8m.png'
+          "
         />
-      </ul>
-    </div>
-    <div v-else class="noFriends">
-      <img
-        src="https://res.cloudinary.com/kiyopikko/image/upload/v1562219254/hanly-gray_2x_pdy6qo.png"
-        alt
-        :width="178"
-      />
-      <p class="txt">
-        右下のボタンからピンを打って近くの友だちを探しましょう
-      </p>
-    </div>
+        <div class="user__txt">マイページ</div>
+      </nuxt-link>
+      <div v-if="getFriends.length > 0" class="friends">
+        <h2 class="headline">友だち</h2>
+        <ul>
+          <FriendItem
+            v-for="friend in getFriends"
+            :key="friend.id"
+            :to="`/friends/${friend.id}`"
+            :nickname="friend.nickname"
+            :date="friend.date"
+            :img="friend.img"
+          />
+        </ul>
+      </div>
+      <div v-else class="noFriends">
+        <img
+          src="https://res.cloudinary.com/kiyopikko/image/upload/v1562219254/hanly-gray_2x_pdy6qo.png"
+          alt
+          :width="178"
+        />
+        <p class="txt">
+          右下のボタンからピンを打って近くの友だちを探しましょう
+        </p>
+      </div>
+    </pull-to>
     <button
       class="pin"
       :class="isPinning ? 'isPinning' : ''"
@@ -43,20 +45,11 @@
 </template>
 
 <script>
-// 友だちデータ、サーバーからくるデータを模したもの
-// const dummyFriends = [
-//   {
-//     id: 'dummy-id',
-//     nickname: 'dummy-nickname',
-//     face_image_url: '',
-//     pin: {
-//       datetime: new Date(),
-//       latitude: 0,
-//       longitude: 0,
-//     },
-//   },
-// ]
+import PullTo from 'vue-pull-to'
 export default {
+  components: {
+    PullTo,
+  },
   async fetch() {
     const { data } = await this.$axios.get('/api/friends')
     this.friends = data
@@ -65,7 +58,6 @@ export default {
     return {
       isPinning: false,
       friends: [],
-      // face_image_url: '', // 自分の顔写真、実際はサーバーからとってくる
     }
   },
   computed: {
@@ -82,19 +74,28 @@ export default {
     face_image_url() {
       return this.$store.getters['me/face_image_url']
     },
+    topConfig: () => ({
+      pullText: '引っ張って更新',
+      triggerText: '手放して更新',
+      loadingText: '読み込み中...',
+      doneText: '読み込み完了',
+      failText: '読み込み失敗',
+    }),
   },
   methods: {
     async pin() {
       this.isPinning = true
       const { lat, lng } = await this.$getLocation()
-      // console.log('緯度：' + lat, '経度：' + lng)
-      // 実際はサーバーに緯度・経度を送信
       const { data } = await this.$axios.post('/api/my/pin', {
         latitude: lat,
         longitude: lng,
       })
       this.friends = this.friends.concat(data)
       this.isPinning = false
+    },
+    async refresh(loaded) {
+      await this.$fetch()
+      loaded('done')
     },
   },
 }
@@ -114,26 +115,22 @@ export default {
   background-image: url("data:image/svg+xml,%3Csvg width='11' height='14' viewBox='0 0 11 14' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l9 6.333L1 13' stroke='%23fff' stroke-opacity='.2' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   z-index: 1;
 }
-
 .user__icon {
   width: 1.875rem;
   height: 1.875rem;
   border-radius: 50%;
 }
-
 .user__txt {
   margin-left: 0.5rem;
   font-size: 0.875rem;
   color: rgba($color: #fff, $alpha: 0.7);
 }
-
 .headline {
   padding-left: 1rem;
   font-size: 0.875rem;
   margin-bottom: 0.375rem;
   margin-top: 5.375rem;
 }
-
 .noFriends {
   position: absolute;
   height: 100%;
@@ -143,7 +140,6 @@ export default {
   align-items: center;
   justify-content: center;
 }
-
 .txt {
   font-size: 0.875rem;
   color: rgba($color: #fff, $alpha: 0.7);
@@ -151,7 +147,6 @@ export default {
   max-width: 17.5rem;
   margin-top: 2.5rem;
 }
-
 .pin {
   z-index: 1;
   position: absolute;
@@ -172,7 +167,6 @@ export default {
     opacity: 0.3;
   }
 }
-
 @keyframes pin {
   0% {
     transform: rotate(0deg);
