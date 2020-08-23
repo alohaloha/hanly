@@ -11,6 +11,7 @@
     <div class="buttons">
       <BaseButton to="/signin">ログイン</BaseButton>
       <BaseButton to="/signup">新規登録</BaseButton>
+      <!-- test -->
     </div>
   </div>
 </template>
